@@ -1,0 +1,2 @@
+PORT=
+CONNECT_STRING =  "protocolo_bd://usuario:senha@host:porta/nome_do_banco"
