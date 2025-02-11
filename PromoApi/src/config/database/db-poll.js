@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const { Pool } = require('pg')
 
+
 const poll = new Pool({
     connectionString: process.env.CONNECT_STRING
 })
