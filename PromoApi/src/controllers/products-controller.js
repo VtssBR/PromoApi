@@ -1,7 +1,7 @@
 const Product = require('../models/Product.js')
 
 const productsController = {
-    // READALL: GET /products
+    //GET: /products
     index: async (req, res) => {
         try {
             const products = await Product.findAll()
@@ -13,7 +13,7 @@ const productsController = {
     },
     
     
-    // CREATE: POST /products
+    //POST: /products
     create: async (req, res) => {
         try {
             const newProduct = await Product.create(req.body);
@@ -25,7 +25,7 @@ const productsController = {
     },
     
     
-    // READ: GET /products/:id
+    // GET: /products/:id
     show: async (req, res) => {
         try {
             const product = await Product.findById(req.params.id);
@@ -42,7 +42,7 @@ const productsController = {
     },
     
     
-    //UPDATE: PUT /products/:id
+    //PUT: /products/:id
     update: async (req, res) => {
         try {
             const updateProduct = await Product.update(req.params.id, req.body);
@@ -59,7 +59,7 @@ const productsController = {
     },
     
     
-    // DELETE /products/:id
+    // DELETE: /products/:id
     delete: async (req, res) => {
         try {
             const deleteProduct = await Product.delete(req.params.id);

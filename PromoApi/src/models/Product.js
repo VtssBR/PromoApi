@@ -40,7 +40,7 @@ class Product {
 
     
     //UPDATE
-    static async update(id, atributes){
+    static async update(id, attributes){
         //Realizado uma consulta posterior a atualizacao
         const {rows} = await query(`SELECT * FROM products WHERE id = $1`,[id])
         
@@ -48,7 +48,7 @@ class Product {
 
         const product = new Product(rows[0])
 
-         Object.assign(product, atributes) // Copia todas as propriedades do objeto origem(atributes) para o objeto destino(product).
+         Object.assign(product, attributes) // Copia todas as propriedades do objeto origem(attributes) para o objeto destino(product).
          product.updatedAt = new Date()
 
         await query(
