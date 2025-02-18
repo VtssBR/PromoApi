@@ -45,6 +45,6 @@ model Product {
 //Relacionada tanto ao User quanto à Category (N:N)
 model Category {
   id      String    @id @default(uuid())
-  nome    String    @unique
+  name    String    @unique
   product Product[]
 }
