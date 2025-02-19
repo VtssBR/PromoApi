@@ -1,17 +1,16 @@
 import { Handler } from "express";
-import { prisma } from "../database";
-import { HttpError } from "../errors/HttpError";
-import { CategoryCreateSchema, CategoryUpdateSchema} from "../validations/CategorysRequestSchema";
-
+import { CategoryService } from "../services/CategoryService";
 
 
 export class CategoryController {
 
+    private categoryService = new CategoryService();
+
     //GET: /categorys
     index: Handler = async (req, res, next) => {
         try {
-            const categorys = await prisma.category.findMany()
-            res.status(200).json(categorys)
+            const categories = await this.categoryService.getAll();
+            res.status(200).json(categories)
 
         } catch (error) {
             next(error)
@@ -21,11 +20,9 @@ export class CategoryController {
     //POST /categorys
     create: Handler = async (req, res, next) => {
         try {
-            const body = CategoryCreateSchema.parse(req.body)
 
-            const newCategory = await prisma.category.create({
-                data:body
-            });
+            const newCategory = await this.categoryService.create(req.body);
+            
             res.status(200).json(newCategory)
         } catch (error) {
             next(error)
@@ -38,9 +35,12 @@ export class CategoryController {
 
             const id = String(req.params.id)
 
-            const categoryId = await prisma.category.findUnique({where:{id}})
+            const categoryId = await this.categoryService.getById(id);
 
-            if(!categoryId) throw new HttpError(404,"Categoria nao encontrado")
+            if (!categoryId) {
+                res.status(404).json({ message: "Categoria não encontrada" });
+                return;
+            }
 
             res.status(200).json(categoryId)
 
@@ -54,13 +54,15 @@ export class CategoryController {
         try {
 
             const id = String(req.params.id)
-            const body = CategoryUpdateSchema.parse(req.body)
 
-            const categoryId = await prisma.category.findUnique({where:{id}})
+            const categoryId = await this.categoryService.getById(id);
 
-            if(!categoryId) throw new HttpError(404,"Categoria nao encontrado")
+            if (!categoryId) {
+                res.status(404).json({ message: "Categoria não encontrada" });
+                return;
+            }
 
-            const updatedCategory = await prisma.category.update({ data: body, where: { id } })
+            const updatedCategory = await this.categoryService.update(id, req.body);
 
             res.status(200).json(updatedCategory)
 
@@ -75,14 +77,17 @@ export class CategoryController {
 
             const id = String(req.params.id)
 
-            const categoryId = await prisma.category.findUnique({where:{id}})
+            const categoryId = await this.categoryService.getById(id);
 
-            if(!categoryId) throw new HttpError(404,"Categoria nao encontrado")
+            if (!categoryId) {
+                res.status(404).json({ message: "Categoria não encontrada" });
+                return;
+            }
 
-            const deletedCategory = await prisma.category.delete({where: {id}})
+            const deletedCategory = await this.categoryService.delete(id);
 
             res.status(200).json(deletedCategory)
-            
+
         } catch (error) {
             next(error)
         }

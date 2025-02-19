@@ -1,88 +1,64 @@
 import { Handler } from "express";
-import { prisma } from "../database";
-import { HttpError } from "../errors/HttpError";
-import { ProductCreateSchema, ProductUpdateSchema } from "../validations/ProductsRequestSchema";
+import { ProductService } from "../services/ProductService";
 
 export class ProductController {
-
-    //GET: /products
+    private productService = new ProductService
+    // GET: /products
     index: Handler = async (req, res, next) => {
         try {
-           const products = await prisma.product.findMany()
-           res.status(200).json(products)
-
+            const products = await this.productService.getAll();
+            res.status(200).json(products);
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
+    };
 
-    //POST /products
+    // POST: /products
     create: Handler = async (req, res, next) => {
         try {
-            const body = ProductCreateSchema.parse(req.body);
-
-            const newProduct = await prisma.product.create({
-                data: body
-            });
-
-            res.status(200).json(newProduct)
-
+            const newProduct = await this.productService.create(req.body);
+            res.status(201).json(newProduct);
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
+    };
 
-    //GET: /products/:id
+    // GET: /products/:id
     show: Handler = async (req, res, next) => {
         try {
-            const id = String(req.params.id)
+            const id = String(req.params.id);
+            const product = await this.productService.getById(id);
 
-            const productId = await prisma.product.findUnique({where:{id}})
+            if (!product) {
+                res.status(404).json({ message: "Produto não encontrado" });
+                return;
+            }
 
-            if(!productId) throw new HttpError(404,"Produto nao encontrado")
-
-            res.status(200).json(productId)
-
+            res.status(200).json(product);
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
+    };
 
-    //UPDATE: /products/:id
+    // UPDATE: /products/:id
     update: Handler = async (req, res, next) => {
         try {
-            const id = String(req.params.id)
-            const body = ProductUpdateSchema.parse(req.body)
-
-            const productExist = await prisma.product.findUnique({where:{id}})
-
-            if(!productExist) throw new HttpError(404,"Produto nao encontrado")
-                
-            const productUpdate = await prisma.product.update({ data: body, where: { id } })
-
-            res.status(200).json(productUpdate)
-
+            const id = String(req.params.id);
+            const updatedProduct = await this.productService.update(id, req.body);
+            res.status(200).json(updatedProduct);
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
+    };
 
-    //DELETE: /products/:id
+    // DELETE: /products/:id
     delete: Handler = async (req, res, next) => {
         try {
-            const id = String(req.params.id)
-
-            const productExist = await prisma.product.findUnique({where:{id}})
-
-            if(!productExist) throw new HttpError(404,"Produto nao encontrado")
-
-            const deletedProduct = await prisma.product.delete({where:{id}})
-
-            res.status(200).json(deletedProduct)
-
+            const id = String(req.params.id);
+            await this.productService.delete(id);
+            res.status(204).send();
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
-
+    };
 }

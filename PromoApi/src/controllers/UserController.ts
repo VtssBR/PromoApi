@@ -1,14 +1,14 @@
 import { Handler } from "express";
-import { prisma } from "../database";
-import { UserCreateSchema, UserUpdateSchema } from "../validations/UsersRequestSchema";
-import { HttpError } from "../errors/HttpError";
+import { UserService } from "../services/UserService";
 
 export class UserController {
+
+    private userService = new UserService
 
     //GET: /users
     index: Handler = async (req, res, next) => {
         try {
-            const users = await prisma.user.findMany()
+            const users = await this.userService.getAll();
             res.status(200).json(users)
 
         } catch (error) {
@@ -19,11 +19,8 @@ export class UserController {
     //POST /users
     create: Handler = async (req, res, next) => {
         try {
-            const body = UserCreateSchema.parse(req.body);
 
-            const newUser = await prisma.user.create({
-                data: body
-            });
+            const newUser = await this.userService.create(req.body);
 
             res.status(201).json(newUser)
 
@@ -37,9 +34,11 @@ export class UserController {
         try {
             const id = String(req.params.id)
 
-            const user = await prisma.user.findUnique({ where: { id } })
+            const user = await this.userService.getById(id);
 
-            if (!user) throw new HttpError(404, "Usuario não encontrado")
+            if (!user) {
+                res.status(404).json({ message: "Usuario não encontrado" })
+            }
 
             res.status(200).json(user)
 
@@ -52,13 +51,15 @@ export class UserController {
     update: Handler = async (req, res, next) => {
         try {
             const id = String(req.params.id)
-            const body = UserUpdateSchema.parse(req.body)
+            const body = req.body
+            
+            const user = await this.userService.getById(id);
 
-            const userExists = await prisma.user.findUnique({ where: { id } })
+            if (!user) {
+                res.status(404).json({ message: "Usuario não encontrado" })
+            }
 
-            if (!userExists) throw new HttpError(404, "Usuario não encontrado")
-
-            const userUpdate = await prisma.user.update({ data: body, where: { id } })
+            const userUpdate = await this.userService.update(id, body)
 
             res.status(200).json(userUpdate)
 
@@ -71,11 +72,14 @@ export class UserController {
     delete: Handler = async (req, res, next) => {
         try {
             const id = String(req.params.id)
+            
+            const user = await this.userService.getById(id);
 
-            const userExists = await prisma.user.findUnique({ where: { id } })
-            if (!userExists) throw new HttpError(404, "Usuario não encontrado")
+            if (!user) {
+                res.status(404).json({ message: "Usuario não encontrado" })
+            }
 
-            const deletedUser = await prisma.user.delete({ where: { id } })
+            const deletedUser = await this.userService.delete(id)
 
             res.status(200).json(deletedUser)
 

@@ -8,7 +8,7 @@ const router = Router()
 
 router.use("/users", userRouter);
 router.use("/products", productRouter);
-router.use("/categorys", categoryRouter);
+router.use("/categories", categoryRouter);
 
 
 export {router}
