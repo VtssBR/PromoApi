@@ -19,13 +19,13 @@ export class UserController {
     //POST /users
     create: Handler = async (req, res, next) => {
         try {
-
+            
             const newUser = await this.userService.create(req.body);
 
             res.status(201).json(newUser)
 
-        } catch (error) {
-            next(error)
+        } catch (error: any) {
+            res.status(500).json({ message: "Erro interno do servidor" });
         }
     }
 
@@ -52,7 +52,7 @@ export class UserController {
         try {
             const id = String(req.params.id)
             const body = req.body
-            
+
             const user = await this.userService.getById(id);
 
             if (!user) {
@@ -72,7 +72,7 @@ export class UserController {
     delete: Handler = async (req, res, next) => {
         try {
             const id = String(req.params.id)
-            
+
             const user = await this.userService.getById(id);
 
             if (!user) {

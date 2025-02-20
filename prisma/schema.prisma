@@ -19,12 +19,13 @@ model User {
   name     String    @db.VarChar(255)
   email    String    @unique @db.VarChar(255)
   password String
+  role     String    @default("user")
   Product  Product[]
 }
 
 //Cada categoria pode conter várias promoções (1:N)
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   price       Float
   description String?
@@ -34,10 +35,10 @@ model Product {
   longitude   Float?
   link        String?
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
   expiresAt   DateTime
 }

@@ -12,6 +12,12 @@ export class UserService {
 
     async create(data: any) {
         const validData = UserCreateSchema.parse(data);
+        const emailUser = await prisma.user.findUnique({ where: { email: validData.email } });
+
+        if (emailUser) {
+            throw new Error("E-mail já está em uso.");
+        }
+
         return await prisma.user.create({ data: validData });
     }
 
@@ -24,3 +30,4 @@ export class UserService {
         return await prisma.user.delete({ where: { id } });
     }
 }
+
