@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const SECRET = process.env.JWT_SECRET || "sua_chave_secreta";
+const SECRET = String(process.env.JWT_SECRET)
 
 export const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.header("Authorization");
