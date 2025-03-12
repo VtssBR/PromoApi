@@ -26,7 +26,7 @@ export class AuthService {
             },
         });
 
-        const token = generateToken(newUser.id, newUser.role);
+        const token = generateToken(newUser.id);
 
         return { newUser, token }
 
@@ -40,7 +40,7 @@ export class AuthService {
         const isPasswordValid = await comparePassword(password, user.password);
         if (!isPasswordValid) throw new Error("Senha inválida");
 
-        const token = generateToken(user.id, user.role);
+        const token = generateToken(user.id);
         return {
             user: {
                 id: user.id,

@@ -4,7 +4,7 @@ export const UserCreateSchema = z.object({
     name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
     email: z.string(),
     password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-    role: z.string()
+    role: z.string().optional()
 });
 
 export const UserUpdateSchema = z.object({

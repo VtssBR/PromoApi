@@ -13,7 +13,7 @@ export const authenticateUser = (req: Request, res: Response, next: NextFunction
     const token = authHeader.replace("Bearer ", "");
 
     try {
-        const decoded = jwt.verify(token, SECRET) as { userId: string; role: string };
+        const decoded = jwt.verify(token, SECRET) as { userId: string};
         
         (req as any).user = decoded;
 

@@ -25,10 +25,12 @@ export class AuthController {
 
     login: Handler = async (req, res, next) => {
         try {
+            console.log("Corpo da requisição:", req.body);
+
             const { email, password } = req.body;
             const { user, token } = await this.authService.login(email, password);
 
-            res.status(200).json({ user: { id: user.id, name: user.name, role: user.role }, token });
+            res.status(200).json({ user: { id: user.id, name: user.name }, token });
 
         } catch (error: any) {
             if (error.message.includes("Email não encontrado")) {
