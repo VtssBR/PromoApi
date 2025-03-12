@@ -30,7 +30,7 @@ export class AuthController {
             const { email, password } = req.body;
             const { user, token } = await this.authService.login(email, password);
 
-            res.status(200).json({ user: { id: user.id, name: user.name }, token });
+            res.status(200).json({ user: { id: user.id, name: user.name, role: user.role }, token });
 
         } catch (error: any) {
             if (error.message.includes("Email não encontrado")) {

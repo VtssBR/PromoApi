@@ -8,8 +8,8 @@ const userController = new UserController()
 
 userRouter.get("/",  userController.index);
 userRouter.post('/', userController.create);
-userRouter.get('/:id',authenticateUser, userController.show);
-userRouter.put('/:id',authenticateUser, userController.update);
-userRouter.delete('/:id', authenticateUser, isAdmin, userController.delete);
+userRouter.get('/:id', userController.show);
+userRouter.put('/:id', userController.update);
+userRouter.delete('/:id', userController.delete);
 
 export {userRouter}
