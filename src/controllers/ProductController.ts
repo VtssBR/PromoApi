@@ -1,5 +1,7 @@
 import { Handler } from "express";
 import { ProductService } from "../services/ProductService";
+import { cloudinary } from "../utils/cloudinary";
+import fs from "fs";
 
 export class ProductController {
     private productService = new ProductService
@@ -16,7 +18,20 @@ export class ProductController {
     // POST: /products
     create: Handler = async (req, res, next) => {
         try {
-            const newProduct = await this.productService.create(req.body);
+            let imageUrl = "";
+    
+            if (req.file) {
+                const result = await cloudinary.uploader.upload(req.file.path);
+                imageUrl = result.secure_url;
+                fs.unlinkSync(req.file.path);
+            }
+    
+            const newProduct = await this.productService.create({
+                ...req.body,
+                image: imageUrl,
+                price: parseFloat(req.body.price) || 0,
+            });
+    
             res.status(201).json(newProduct);
         } catch (error) {
             next(error);
