@@ -6,6 +6,7 @@ export const ProductCreateSchema =  z.object({
     price: z.number(),
     description: z.string(),
     image: z.string().optional(),
+    publicId: z.string().optional(),
     address: z.string().optional(),
     latitude: z.number().min(-90).max(90).optional(),
     longitude: z.number().min(-180).max(180).optional(),

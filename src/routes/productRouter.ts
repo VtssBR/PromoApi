@@ -8,7 +8,7 @@ const productRouter = Router()
 const productController = new ProductController()
 
 productRouter.get("/", productController.index);
-productRouter.post('/', upload.single('image'), productController.create);
+productRouter.post('/', authenticateUser, upload.single('image'), productController.create);
 productRouter.get('/:id', productController.show);
 productRouter.put('/:id',  productController.update);
 productRouter.delete('/:id', productController.delete);

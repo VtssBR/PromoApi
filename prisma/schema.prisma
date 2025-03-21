@@ -30,6 +30,7 @@ model Product {
   price       Float
   description String?
   image       String?
+  publicId    String? 
   address     String?
   latitude    Float?
   longitude   Float?

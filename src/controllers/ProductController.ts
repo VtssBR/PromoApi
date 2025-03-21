@@ -19,16 +19,19 @@ export class ProductController {
     create: Handler = async (req, res, next) => {
         try {
             let imageUrl = "";
+            let publicId = "";
     
             if (req.file) {
                 const result = await cloudinary.uploader.upload(req.file.path);
                 imageUrl = result.secure_url;
+                publicId = result.public_id;
                 fs.unlinkSync(req.file.path);
             }
     
             const newProduct = await this.productService.create({
                 ...req.body,
                 image: imageUrl,
+                publicId: publicId,
                 price: parseFloat(req.body.price) || 0,
             });
     
@@ -69,7 +72,11 @@ export class ProductController {
     // DELETE: /products/:id
     delete: Handler = async (req, res, next) => {
         try {
+
+            const { publicId } = req.query;
             const id = String(req.params.id);
+
+            await cloudinary.uploader.destroy(String(publicId));
             await this.productService.delete(id);
             res.status(204).send();
         } catch (error) {
