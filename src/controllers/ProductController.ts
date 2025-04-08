@@ -1,6 +1,7 @@
 import { Handler } from "express";
 import { ProductService } from "../services/ProductService";
 import { cloudinary } from "../utils/cloudinary";
+import { geocodeAddress } from "../utils/geocodeAddress";
 import fs from "fs";
 
 export class ProductController {
@@ -27,12 +28,21 @@ export class ProductController {
                 publicId = result.public_id;
                 fs.unlinkSync(req.file.path);
             }
+
+            let geoData = null;
+
+            if (req.body.address) {
+                geoData = await geocodeAddress(req.body.address);
+            }
     
             const newProduct = await this.productService.create({
                 ...req.body,
                 image: imageUrl,
                 publicId: publicId,
                 price: parseFloat(req.body.price) || 0,
+                address: geoData?.address || req.body.address || "",
+                latitude: geoData?.latitude || null,
+                longitude: geoData?.longitude || null,
             });
     
             res.status(201).json(newProduct);
