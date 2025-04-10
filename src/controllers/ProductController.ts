@@ -1,7 +1,7 @@
 import { Handler } from "express";
 import { ProductService } from "../services/ProductService";
+import { ImageUploadService } from '../services/ImageUploadService';
 import { cloudinary } from "../utils/cloudinary";
-import fs from "fs";
 
 export class ProductController {
     private productService = new ProductService
@@ -18,14 +18,22 @@ export class ProductController {
     // POST: /products
     create: Handler = async (req, res, next) => {
         try {
-            let imageUrl = "";
-            let publicId = "";
-    
+            let imageUrl = '';
+            let publicId = '';
+            console.log("req.body:", req.body);
+            console.log("req.file:", req.file);
+
             if (req.file) {
-                const result = await cloudinary.uploader.upload(req.file.path);
-                imageUrl = result.secure_url;
-                publicId = result.public_id;
-                fs.unlinkSync(req.file.path);
+                try {
+                    const result = await ImageUploadService.processImage(req.file.path);
+                    imageUrl = result.imageUrl;
+                    publicId = result.publicId;
+                } catch (error) {
+                    res.status(400).json({
+                        error: error instanceof Error ? error.message : 'Erro ao processar imagem.',
+                    });
+                    return;
+                }
             }
 
             const newProduct = await this.productService.create({
@@ -34,14 +42,16 @@ export class ProductController {
                 publicId: publicId,
                 price: parseFloat(req.body.price) || 0,
                 latitude: parseFloat(req.body.latitude),
-                longitude: parseFloat(req.body.longitude)
+                longitude: parseFloat(req.body.longitude),
             });
-    
+
             res.status(201).json(newProduct);
         } catch (error) {
             next(error);
         }
     };
+
+
 
     // GET: /products/:id
     show: Handler = async (req, res, next) => {
