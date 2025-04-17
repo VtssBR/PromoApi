@@ -1,7 +1,6 @@
 import { Handler } from "express";
 import { ProductService } from "../services/ProductService";
 import { ImageUploadService } from '../services/ImageUploadService';
-import { cloudinary } from "../utils/cloudinary";
 
 export class ProductController {
     private productService = new ProductService
@@ -84,15 +83,13 @@ export class ProductController {
     // DELETE: /products/:id
     delete: Handler = async (req, res, next) => {
         try {
-
-            const { publicId } = req.query;
-            const id = String(req.params.id);
-
-            await cloudinary.uploader.destroy(String(publicId));
-            await this.productService.delete(id);
-            res.status(204).send();
+          const { publicId } = req.query;
+          const id = String(req.params.id);
+      
+          await this.productService.deleteProductAndImage(id, String(publicId));
+          res.status(204).send();
         } catch (error) {
-            next(error);
+          next(error);
         }
     };
 }
