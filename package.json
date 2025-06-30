@@ -6,7 +6,7 @@
     "dev": "tsx watch ./src/server.ts",
     "build": "tsc",
     "postinstall": "prisma generate",
-    "start": "npm run build && npx prisma migrate deploy && node build/src/server.js",
+    "start": "npm run build && npx prisma migrate deploy && node build/prisma/seed.js && node build/src/server.js",
     "seed": "node prisma/build/seed.js"
   },
   "author": "",
