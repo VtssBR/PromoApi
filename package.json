@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch ./src/server.ts",
     "build": "tsc",
-    "start": "node ./build/server.ts",
+    "postinstall": "prisma generate",
+    "start": "npx prisma migrate deploy && node server.js",
     "seed": "node prisma/build/seed.js"
   },
   "author": "",
