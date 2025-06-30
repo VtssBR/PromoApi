@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-    
   const categorias = [
     { name: 'Eletrônicos e Computadores' },
     { name: 'Saúde e Beleza' },
@@ -18,7 +17,13 @@ async function main() {
   ];
 
   for (const categoria of categorias) {
-    await prisma.category.create({ data: categoria });
+    const exists = await prisma.category.findUnique({
+      where: { name: categoria.name },
+    });
+
+    if (!exists) {
+      await prisma.category.create({ data: categoria });
+    }
   }
 
   console.log('Categorias criadas com sucesso!');
