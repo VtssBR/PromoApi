@@ -11,6 +11,6 @@ productRouter.get("/", productController.index);
 productRouter.post('/', authenticateUser, upload.single('image'), productController.create);
 productRouter.get('/:id', productController.show);
 productRouter.put('/:id',  productController.update);
-productRouter.delete('/:id', productController.delete);
+productRouter.delete('/:id', authenticateUser, isAdmin, productController.delete);
 
 export {productRouter}
